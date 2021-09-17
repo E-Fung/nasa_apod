@@ -19,3 +19,7 @@ body {
 .my-masonry-grid_column {
   background-clip: padding-box;
 }
+
+.ppn:hover .pin:not(:hover) {
+  opacity: 0.4;
+}

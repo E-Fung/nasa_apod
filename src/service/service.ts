@@ -7,8 +7,8 @@ let params = {
   // date: '2020-06-14', //format YYYY-MM-DD, must be after 1995-06-16
   concept_tags: true, //returns concept tags
   hd: true, //legacy purpose, no actual effect
-  // count: 2, // <= 100 cant be used with any date parameters, returns random
-  start_date: '2021-09-01', // cannot be used with date
+  // count: 15, // <= 100 cant be used with any date parameters, returns random
+  start_date: '2021-08-20', // cannot be used with date
   // end_date: //defaults to current date
   thumbs: true, //returns URL of video thumbnail if APOD is video
 };
