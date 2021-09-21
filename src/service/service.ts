@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { ApodData, rawThumbnailURL } from '../model/Models';
 import { getOldMonth, getNewMonth } from '../utility/utility';
+import { trackPromise } from 'react-promise-tracker';
 
-const API_KEY = 'fDUi6C0OL8rtK393Iwutbdr2KtKyDp1C31ayfYNC';
+const API_KEY: string = 'fDUi6C0OL8rtK393Iwutbdr2KtKyDp1C31ayfYNC';
 
 export const getThumbnailUrl = (videoUrl: string): Promise<rawThumbnailURL> => {
-  let url = `https://noembed.com/embed?url=${videoUrl}`;
-  return axios.get(url).then((resp: any) => resp);
+  let url: string = `https://noembed.com/embed?url=${videoUrl}`;
+  return trackPromise(axios.get(url).then((resp: any) => resp));
 };
 
 export const getBasicAPI = (): Promise<ApodData> => {
@@ -23,8 +24,8 @@ export const getBasicAPI = (): Promise<ApodData> => {
     start_date: newStartDate, // cannot be used with date
     thumbs: true, //returns URL of video thumbnail if APOD is video
   };
-  let url = `https://api.nasa.gov/planetary/apod`;
-  return axios.get(url, { params: params }).then((resp: any) => resp);
+  let url: string = `https://api.nasa.gov/planetary/apod`;
+  return trackPromise(axios.get(url, { params: params }).then((resp: any) => resp));
 };
 
 export const getOldAPI = (oldestDate: Date): Promise<ApodData> => {
@@ -38,8 +39,8 @@ export const getOldAPI = (oldestDate: Date): Promise<ApodData> => {
     end_date: oldestDate, //defaults to current date  **INCLUSIVE**
     thumbs: true, //returns URL of video thumbnail if APOD is video
   };
-  let url = `https://api.nasa.gov/planetary/apod`;
-  return axios.get(url, { params: params }).then((resp: any) => resp);
+  let url: string = `https://api.nasa.gov/planetary/apod`;
+  return trackPromise(axios.get(url, { params: params }).then((resp: any) => resp));
 };
 
 export const getNewAPI = (newestDate: Date): Promise<ApodData> => {
@@ -54,5 +55,5 @@ export const getNewAPI = (newestDate: Date): Promise<ApodData> => {
     thumbs: true, //returns URL of video thumbnail if APOD is video
   };
   let url = `https://api.nasa.gov/planetary/apod`;
-  return axios.get(url, { params: params }).then((resp: any) => resp);
+  return trackPromise(axios.get(url, { params: params }).then((resp: any) => resp));
 };

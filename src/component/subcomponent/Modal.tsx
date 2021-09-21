@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { makeStyles, Grid, Typography, IconButton } from '@material-ui/core';
 import ReactDom from 'react-dom';
+import ReactImageFallback from 'react-image-fallback';
+import { makeStyles, Grid, Typography, IconButton } from '@material-ui/core';
 import { Apod } from './../../model/Models';
 import { HighlightOff } from '@material-ui/icons';
 import { LikeButton } from './LikeButton';
@@ -29,7 +30,7 @@ const useStyles = makeStyles(() => ({
     padding: '15px',
     color: 'white',
   },
-  xButton: {
+  closeButton: {
     zIndex: 10000,
     transform: 'scale(1.2)',
     position: 'absolute',
@@ -53,13 +54,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-type Props = { Apod: Apod; isOpen: boolean; pic: string; onCloseModal: () => void; liked: boolean; toggleLike: () => void };
-let renderCount = 0;
-export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal, liked, toggleLike }) => {
+type Props = { Apod: Apod; modalOpen: boolean; pic: string; onCloseModal: () => void; liked: boolean; toggleLike: () => void };
+
+export const Modal: React.FC<Props> = ({ modalOpen, Apod, pic, onCloseModal, liked, toggleLike }) => {
   const classes = useStyles();
-  useEffect(() => {
-    renderCount++;
-  });
+
   useEffect(() => {
     //closes modal on 'esc'
     const close = (e: any) => {
@@ -71,7 +70,7 @@ export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal, liked,
     return () => window.removeEventListener('keydown', close);
   }, []);
 
-  if (!isOpen) {
+  if (!modalOpen) {
     return <></>;
   }
 
@@ -84,18 +83,24 @@ export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal, liked,
           e.stopPropagation();
         }}
       >
-        {console.log('Modal Render:', renderCount)}
-        <IconButton onClick={onCloseModal} className={classes.xButton}>
+        <IconButton onClick={onCloseModal} className={classes.closeButton}>
           <HighlightOff />
         </IconButton>
         <Grid container className={classes.overlayContent} justifyContent="center" alignContent="center">
           <Grid item style={{ height: '100%', width: '50%' }}>
             <Grid container style={{ width: '100%', height: '100%' }} justifyContent="center" alignContent="center">
-              <img src={pic} className={`${classes.modal} `} alt="awdwa"></img>
+              {console.log(Apod)}
+              <ReactImageFallback
+                src={pic}
+                className={classes.modal}
+                alt={Apod.title}
+                fallbackImage="https://apod.nasa.gov/apod/image/1710/MirachNGC404KentWood.jpg"
+                initialImage="loader.gif"
+              />
             </Grid>
           </Grid>
           <Grid item style={{ height: '100%', width: '50%' }}>
-            <Grid container style={{ height: '100%', width: '100%', padding: '30px' }} alignContent="center">
+            <Grid container style={{ height: '100%', width: '100%', padding: '10px' }} alignContent="center">
               <Typography variant="h3" className={classes.words}>
                 {Apod.title}
               </Typography>

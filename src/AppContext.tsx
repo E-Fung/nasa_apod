@@ -1,23 +1,17 @@
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import React, { useState, createContext, useContext, useEffect, useCallback } from 'react';
 import { displayOption, Apod } from './model/Models';
 
 export const useAppContext = (): any => useContext(AppContext);
 
 export const AppContext = createContext({});
 
-let renderCount = 0;
 export const AppContextProvider: React.FC = ({ children }) => {
-  useEffect(() => {
-    renderCount++;
-  });
   const [showLiked, setShowLiked] = useState<boolean>(false);
   const [displayType, setDisplayType] = useState<displayOption>(displayOption.Recent);
-  const [displayList, setDisplayList] = useState([] as Apod[]);
+  const [displayApod, setDisplayApod] = useState([] as Apod[]);
   const [allApod, setAllApod] = useState([] as Apod[]);
 
-  const filterLiked = () => {
-    console.log('filter like list');
-
+  const filterLiked = (): void => {
     let tempApodList: string[] = [];
     Object.keys(localStorage).forEach(function (key) {
       if (localStorage.getItem(key) === 'true') {
@@ -25,44 +19,42 @@ export const AppContextProvider: React.FC = ({ children }) => {
       }
     });
     let likedList: Apod[] = allApod.filter((apod) => tempApodList.includes(apod.date.toString()));
-    setDisplayList(likedList);
+    setDisplayApod(likedList);
   }; //sort by date, used when like button is pressed (show liked)
 
-  const resetList = () => {
-    console.log('reseting list');
-    setDisplayList(allApod);
-  };
-
-  useEffect(() => {
-    resetList();
+  const resetList = useCallback((): void => {
+    setDisplayApod(allApod);
   }, [allApod]);
 
-  useEffect(() => {
-    changeDisplayList();
-  }, [displayList, displayType]);
-
-  const changeDisplayList = (): void => {
-    //earlier date is bigger
-    if (displayList.length) {
-      let tempList = displayList;
+  const changedisplayApod = useCallback((): void => {
+    if (displayApod.length) {
+      let tempList: Apod[] = displayApod;
       let startOfList: Date = tempList[0].date;
       let endOfList: Date = tempList[tempList.length - 1].date;
       switch (displayType) {
         case displayOption.Recent:
           if (startOfList < endOfList) {
-            let temp = [...displayList];
-            setDisplayList(temp.reverse());
+            let temp = [...displayApod];
+            setDisplayApod(temp.reverse());
           }
           break;
         case displayOption.Oldest:
           if (startOfList > endOfList) {
-            let temp = [...displayList];
-            setDisplayList(temp.reverse());
+            let temp = [...displayApod];
+            setDisplayApod(temp.reverse());
           }
           break;
       }
     }
-  };
+  }, [displayApod, displayType]);
+
+  useEffect((): void => {
+    resetList();
+  }, [allApod, resetList]);
+
+  useEffect((): void => {
+    changedisplayApod();
+  }, [displayApod, displayType, changedisplayApod]);
 
   return (
     <AppContext.Provider
@@ -71,16 +63,15 @@ export const AppContextProvider: React.FC = ({ children }) => {
         setShowLiked,
         displayType,
         setDisplayType,
-        displayList,
-        setDisplayList,
+        displayApod,
+        setDisplayApod,
         allApod,
         setAllApod,
         filterLiked,
         resetList,
-        changeDisplayList,
+        changedisplayApod,
       }}
     >
-      {console.log('AppContext Render', renderCount)}
       {children}
     </AppContext.Provider>
   );

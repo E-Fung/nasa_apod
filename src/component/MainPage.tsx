@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 import { getBasicAPI, getOldAPI, getNewAPI } from '../service/service';
 import { Apod } from '../model/Models';
-import { ApodCard } from './subcomponent/ApodCard';
 import { Container, makeStyles, Button, Grid, AppBar, Toolbar, Typography } from '@material-ui/core';
-import Masonry from 'react-masonry-css';
 import { useAppContext } from '../AppContext';
 import { displayOption } from '../model/Models';
 import { TopBar } from './TopBar';
 import { isTodaysDate } from '../utility/utility';
+import { LoadingIndic } from './subcomponent/LoadingIndic';
+import { usePromiseTracker } from 'react-promise-tracker';
+import { ApodList } from './subcomponent/ApodList';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -22,36 +23,22 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1,
-};
-
-let renderCount = 0;
 export const MainPage: React.FC = () => {
   const classes = useStyles();
-  const { showLiked, displayType, displayList, setDisplayList, allApod, setAllApod } = useAppContext();
-
-  useEffect(() => {
-    renderCount++;
-  });
-  console.log('MainPage Render', renderCount);
+  const { showLiked, displayType, displayApod, setDisplayApod, allApod, setAllApod } = useAppContext();
+  const { promiseInProgress } = usePromiseTracker();
 
   useEffect(() => {
     //initial api call, only runs once
     (async () => {
-      let initialAllApod: Apod[] = (await getBasicAPI()).data.reverse();
-      setAllApod(initialAllApod);
-      setDisplayList(initialAllApod);
-      console.log('this only runs once');
+      let initialApodList: Apod[] = (await getBasicAPI()).data.reverse();
+      setAllApod(initialApodList);
+      setDisplayApod(initialApodList);
     })();
-  }, []);
+  }, [setAllApod, setDisplayApod]);
 
   const loadMore = (): void => {
-    //usecallback?
-    if (displayList.length) {
+    if (displayApod.length) {
       switch (displayType) {
         case displayOption.Recent:
           loadMoreOlderApod();
@@ -66,36 +53,27 @@ export const MainPage: React.FC = () => {
   };
 
   const loadMoreOlderApod = async () => {
-    console.log('loadmore OLD', allApod);
-    let lastIndex: number = allApod.length - 1;
-    let oldestDate: Date = allApod[lastIndex].date;
+    let latestIndex: number = allApod.length - 1;
+    let oldestDate: Date = allApod[latestIndex].date;
     let newData: Apod[] = (await getOldAPI(oldestDate)).data;
-
-    console.log([...newData]);
-    let temp = [...allApod];
-    console.log(temp);
-
     newData.pop();
     newData.reverse();
     setAllApod((oldData: Apod[]) => [...oldData, ...newData]);
   };
 
   const loadMoreNewerApod = async () => {
-    console.log('loadmore NEW', allApod);
-    let newestDate: Date = allApod[0].date;
+    let earlistIndex: number = 0;
+    let newestDate: Date = allApod[earlistIndex].date;
     let newData: Apod[] = (await getNewAPI(newestDate)).data;
-
-    console.log([...newData]);
-    let temp = [...allApod];
-    console.log(temp);
-
     newData.shift();
     newData.reverse();
-
     setAllApod((oldData: Apod[]) => [...newData, ...oldData]);
   };
 
-  //use useMemo if pulling from local storage, if nothing in local, API
+  const showLoadButton = () => {
+    let latestApodLoaded: boolean = displayType === displayOption.Oldest && isTodaysDate(allApod);
+    return !showLiked && !promiseInProgress && !latestApodLoaded;
+  };
 
   if (!allApod.length) {
     return <></>;
@@ -110,13 +88,10 @@ export const MainPage: React.FC = () => {
       </AppBar>
       <Container maxWidth="lg" className={classes.container}>
         <Grid container justifyContent="center">
-          {displayList.length === 0 ? <Typography style={{ color: 'white' }}>No Liked Stuff</Typography> : ''}
-          <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
-            {displayList.map((ent: Apod, index: number) => (
-              <ApodCard key={index} Apod={ent} />
-            ))}
-          </Masonry>
-          {!showLiked && !(displayType === displayOption.Oldest && isTodaysDate(allApod)) && (
+          {displayApod.length === 0 ? <Typography style={{ color: 'white' }}>No Liked Stuff</Typography> : ''}
+          <ApodList ApodList={displayApod} />
+          {promiseInProgress && <LoadingIndic />}
+          {showLoadButton() && (
             <Button onClick={loadMore} style={{ color: 'white' }}>
               Load More
             </Button>

@@ -5,6 +5,7 @@ import { LikeButton } from './LikeButton';
 import { Modal } from './Modal';
 import { getThumbnailUrl } from './../../service/service';
 import { useAppContext } from './../../AppContext';
+import ReactImageFallback from 'react-image-fallback';
 type Props = { Apod: Apod };
 
 const useStyles = makeStyles(() => ({
@@ -47,27 +48,35 @@ const useStyles = makeStyles(() => ({
     padding: '0',
   },
 }));
-let renderCount = 0;
+
 export const ApodCard: React.FC<Props> = ({ Apod }) => {
   const classes = useStyles();
+  const { showLiked, filterLiked } = useAppContext();
   const [hover, setHover] = useState(false as boolean);
-  const [isOpen, setIsOpen] = useState(false as boolean);
+  const [modalOpen, setModalOpen] = useState(false as boolean);
   const [imageUrl, setImageUrl] = useState('' as string);
   const [liked, setLiked] = useState(false as boolean);
-  const { displayList, showLiked } = useAppContext();
 
   useEffect(() => {
-    let likeState = localStorage.getItem(Apod.date.toString());
+    let likeState: string = localStorage.getItem(Apod.date.toString())!;
     setLiked(likeState === 'true' ? true : false);
-    if (Apod.media_type === MediaType.Image) {
-      setImageUrl(Apod.hdurl);
-    } else {
-      handleGetThumbnail(Apod);
-    }
-    renderCount++;
-  });
+  }, [Apod.date]);
 
-  //console.log('ApodCard render:', renderCount)
+  useEffect(() => {
+    (async () => {
+      if (Apod.media_type === MediaType.Image) {
+        setImageUrl(Apod.hdurl);
+      } else {
+        await getThumbnail(Apod);
+      }
+    })();
+  }, [liked, Apod]);
+
+  useEffect(() => {
+    if (showLiked) {
+      filterLiked();
+    }
+  }, [liked]);
 
   const toggleLike = (): void => {
     let toggled: boolean = !liked;
@@ -75,13 +84,13 @@ export const ApodCard: React.FC<Props> = ({ Apod }) => {
     setLiked(toggled);
   };
 
-  const handleGetThumbnail = async (pod: Apod) => {
+  const getThumbnail = async (pod: Apod) => {
     let rawThumbnailData: rawThumbnailURL = await getThumbnailUrl(pod.url);
-    setImageUrl(rawThumbnailData.data.thumbnail_url);
+    await setImageUrl(rawThumbnailData.data.thumbnail_url);
   };
 
   const handlePicClick = useCallback(() => {
-    setIsOpen(true);
+    setModalOpen(true);
   }, []);
 
   const handleMouseEnter = useCallback(() => {
@@ -93,14 +102,21 @@ export const ApodCard: React.FC<Props> = ({ Apod }) => {
   }, []);
 
   const handleCloseModal = useCallback(() => {
-    setIsOpen(false);
+    setModalOpen(false);
   }, []);
 
   return (
     <Grow in={true}>
       <Grid onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className={classes.pin}>
-        <img alt={Apod.explanation} onClick={handlePicClick} src={imageUrl} className={classes.img}></img>
-        <Modal liked={liked} toggleLike={toggleLike} isOpen={isOpen} Apod={Apod} pic={imageUrl} onCloseModal={handleCloseModal}></Modal>
+        <ReactImageFallback
+          src={imageUrl}
+          onClick={handlePicClick}
+          fallbackImage="https://apod.nasa.gov/apod/image/1710/MirachNGC404KentWood.jpg"
+          initialImage="loader.gif"
+          alt={Apod.explanation}
+          className={classes.img}
+        />
+        <Modal liked={liked} toggleLike={toggleLike} modalOpen={modalOpen} Apod={Apod} pic={imageUrl} onCloseModal={handleCloseModal}></Modal>
         <LikeButton date={Apod.date} liked={liked} toggleLike={toggleLike} />
         {hover && (
           <Fade in={true}>

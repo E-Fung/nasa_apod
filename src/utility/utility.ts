@@ -1,4 +1,5 @@
 import { Apod } from '../model/Models';
+
 export const getOldMonth = (oldestDate: Date): string => {
   const dateLimit = new Date('1995-06-16Z');
   let [year, month, day]: number[] = oldestDate.toString().split('-').map(Number);
@@ -34,7 +35,7 @@ export const getNewMonth = (newestDate: Date): string => {
 };
 
 export const isTodaysDate = (allApod: Apod[]): boolean => {
-  let today = new Date();
-  let todayString = today.toISOString().split('T')[0];
-  return allApod[allApod.length - 1].date.toString() === todayString;
+  let today: Date = new Date();
+  let todayString: string = today.toISOString().split('T')[0];
+  return allApod[0].date.toString() === todayString;
 };
