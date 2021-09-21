@@ -15,7 +15,9 @@ export const AppContextProvider: React.FC = ({ children }) => {
   const [displayList, setDisplayList] = useState([] as Apod[]);
   const [allApod, setAllApod] = useState([] as Apod[]);
 
-  const filterLiked = (): void => {
+  const filterLiked = () => {
+    console.log('filter like list');
+
     let tempApodList: string[] = [];
     Object.keys(localStorage).forEach(function (key) {
       if (localStorage.getItem(key) === 'true') {
@@ -23,31 +25,40 @@ export const AppContextProvider: React.FC = ({ children }) => {
       }
     });
     let likedList: Apod[] = allApod.filter((apod) => tempApodList.includes(apod.date.toString()));
-    console.log(likedList);
     setDisplayList(likedList);
-    changeDisplayList();
   }; //sort by date, used when like button is pressed (show liked)
 
-  const resetList = (): void => {
+  const resetList = () => {
+    console.log('reseting list');
     setDisplayList(allApod);
   };
 
+  useEffect(() => {
+    resetList();
+  }, [allApod]);
+
+  useEffect(() => {
+    changeDisplayList();
+  }, [displayList, displayType]);
+
   const changeDisplayList = (): void => {
+    //earlier date is bigger
     if (displayList.length) {
-      let startOfList: Date = displayList[0].date;
-      let endOfList: Date = displayList[displayList.length - 1].date;
+      let tempList = displayList;
+      let startOfList: Date = tempList[0].date;
+      let endOfList: Date = tempList[tempList.length - 1].date;
       switch (displayType) {
         case displayOption.Recent:
-          if (startOfList > endOfList) {
-            setDisplayList((oldlist: Apod[]) => oldlist.reverse());
+          if (startOfList < endOfList) {
+            let temp = [...displayList];
+            setDisplayList(temp.reverse());
           }
           break;
         case displayOption.Oldest:
-          if (startOfList < endOfList) {
-            setDisplayList((oldlist: Apod[]) => oldlist.reverse());
+          if (startOfList > endOfList) {
+            let temp = [...displayList];
+            setDisplayList(temp.reverse());
           }
-          break;
-        case displayOption.Random:
           break;
       }
     }

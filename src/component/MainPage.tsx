@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { getBasicAPI, getOldAPI, getNewAPI } from '../service/service';
 import { Apod } from '../model/Models';
 import { ApodCard } from './subcomponent/ApodCard';
@@ -7,6 +7,7 @@ import Masonry from 'react-masonry-css';
 import { useAppContext } from '../AppContext';
 import { displayOption } from '../model/Models';
 import { TopBar } from './TopBar';
+import { isTodaysDate } from '../utility/utility';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -20,14 +21,33 @@ const useStyles = makeStyles(() => ({
     zIndex: 100,
   },
 }));
+
+const breakpointColumnsObj = {
+  default: 4,
+  1100: 3,
+  700: 2,
+  500: 1,
+};
+
 let renderCount = 0;
 export const MainPage: React.FC = () => {
+  const classes = useStyles();
+  const { showLiked, displayType, displayList, setDisplayList, allApod, setAllApod } = useAppContext();
+
   useEffect(() => {
     renderCount++;
   });
+  console.log('MainPage Render', renderCount);
 
-  const classes = useStyles();
-  const { showLiked, displayType, setDisplayList, setAllApod, displayList, allApod } = useAppContext();
+  useEffect(() => {
+    //initial api call, only runs once
+    (async () => {
+      let initialAllApod: Apod[] = (await getBasicAPI()).data.reverse();
+      setAllApod(initialAllApod);
+      setDisplayList(initialAllApod);
+      console.log('this only runs once');
+    })();
+  }, []);
 
   const loadMore = (): void => {
     //usecallback?
@@ -46,42 +66,36 @@ export const MainPage: React.FC = () => {
   };
 
   const loadMoreOlderApod = async () => {
-    console.log('loadmore OLD');
+    console.log('loadmore OLD', allApod);
     let lastIndex: number = allApod.length - 1;
     let oldestDate: Date = allApod[lastIndex].date;
     let newData: Apod[] = (await getOldAPI(oldestDate)).data;
+
+    console.log([...newData]);
+    let temp = [...allApod];
+    console.log(temp);
+
     newData.pop();
     newData.reverse();
-
     setAllApod((oldData: Apod[]) => [...oldData, ...newData]);
-    setDisplayList((oldData: Apod[]) => [...oldData, ...newData]);
   };
 
   const loadMoreNewerApod = async () => {
-    console.log('loadmore NEW');
+    console.log('loadmore NEW', allApod);
     let newestDate: Date = allApod[0].date;
     let newData: Apod[] = (await getNewAPI(newestDate)).data;
-    setAllApod((oldData: Apod[]) => [...oldData, ...newData]);
-    newData.shift();
-    setDisplayList((oldData: Apod[]) => [...oldData, ...newData]);
-  };
 
-  useEffect(() => {
-    //initial api call
-    (async () => {
-      let initialallApod: Apod[] = (await getBasicAPI()).data.reverse();
-      setAllApod(initialallApod);
-      setDisplayList(initialallApod);
-    })();
-  }, []);
+    console.log([...newData]);
+    let temp = [...allApod];
+    console.log(temp);
+
+    newData.shift();
+    newData.reverse();
+
+    setAllApod((oldData: Apod[]) => [...newData, ...oldData]);
+  };
 
   //use useMemo if pulling from local storage, if nothing in local, API
-  const breakpointColumnsObj = {
-    default: 4,
-    1100: 3,
-    700: 2,
-    500: 1,
-  };
 
   if (!allApod.length) {
     return <></>;
@@ -90,7 +104,6 @@ export const MainPage: React.FC = () => {
   return (
     <>
       <AppBar position="sticky" className={classes.topBar}>
-        {console.log('MainPage Render', renderCount)}
         <Toolbar>
           <TopBar />
         </Toolbar>
@@ -103,7 +116,7 @@ export const MainPage: React.FC = () => {
               <ApodCard key={index} Apod={ent} />
             ))}
           </Masonry>
-          {!showLiked && (
+          {!showLiked && !(displayType === displayOption.Oldest && isTodaysDate(allApod)) && (
             <Button onClick={loadMore} style={{ color: 'white' }}>
               Load More
             </Button>

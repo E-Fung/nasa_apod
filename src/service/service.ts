@@ -10,6 +10,7 @@ export const getThumbnailUrl = (videoUrl: string): Promise<rawThumbnailURL> => {
 };
 
 export const getBasicAPI = (): Promise<ApodData> => {
+  //returns promise of all APOD from the start of current month to present day
   let curr_date: Date | string = new Date();
   curr_date = curr_date.toISOString().split('T')[0];
   let [year, month, day]: number[] = curr_date.split('-').map(Number);
@@ -17,12 +18,9 @@ export const getBasicAPI = (): Promise<ApodData> => {
   let newStartDate = [year, month, day].map((element) => String(element).padStart(2, '0')).join('-');
   let params = {
     api_key: API_KEY,
-    // date: '2020-06-14', //format YYYY-MM-DD, must be after 1995-06-16
     concept_tags: false, //returns concept tags, currently has no functionality
     hd: true, //legacy purpose, no actual effect
-    // count: 15, // <= 100 cant be used with any date parameters, returns random
     start_date: newStartDate, // cannot be used with date
-    // end_date: '2021-09-01', //defaults to current date  **INCLUSIVE**
     thumbs: true, //returns URL of video thumbnail if APOD is video
   };
   let url = `https://api.nasa.gov/planetary/apod`;

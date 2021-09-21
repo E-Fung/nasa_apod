@@ -1,11 +1,9 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles, Grid, Typography, IconButton } from '@material-ui/core';
 import ReactDom from 'react-dom';
 import { Apod } from './../../model/Models';
 import { HighlightOff } from '@material-ui/icons';
 import { LikeButton } from './LikeButton';
-
-type Props = { Apod: Apod; isOpen: boolean; pic: string; onCloseModal: () => void };
 
 const useStyles = makeStyles(() => ({
   modal: {
@@ -55,9 +53,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal }) => {
+type Props = { Apod: Apod; isOpen: boolean; pic: string; onCloseModal: () => void; liked: boolean; toggleLike: () => void };
+let renderCount = 0;
+export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal, liked, toggleLike }) => {
   const classes = useStyles();
-
+  useEffect(() => {
+    renderCount++;
+  });
   useEffect(() => {
     //closes modal on 'esc'
     const close = (e: any) => {
@@ -82,8 +84,9 @@ export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal }) => {
           e.stopPropagation();
         }}
       >
+        {console.log('Modal Render:', renderCount)}
         <IconButton onClick={onCloseModal} className={classes.xButton}>
-          <HighlightOff />{' '}
+          <HighlightOff />
         </IconButton>
         <Grid container className={classes.overlayContent} justifyContent="center" alignContent="center">
           <Grid item style={{ height: '100%', width: '50%' }}>
@@ -102,8 +105,10 @@ export const Modal: React.FC<Props> = ({ isOpen, Apod, pic, onCloseModal }) => {
               <Typography variant="caption" className={classes.words}>
                 {Apod.date}
               </Typography>
+              <LikeButton date={Apod.date} liked={liked} toggleLike={toggleLike}>
+                Like
+              </LikeButton>
             </Grid>
-            <LikeButton date={Apod.date} />
           </Grid>
         </Grid>
       </Grid>

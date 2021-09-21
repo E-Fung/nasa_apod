@@ -1,59 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Grid, MenuItem, Popper, Grow, ClickAwayListener, Paper, MenuList } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { displayOption } from './../model/Models';
 import { useAppContext } from '../AppContext';
-import { Apod } from './../model/Models';
 
 let renderCount = 0;
 
 export const TopBar: React.FC = () => {
   const [open, setOpen] = useState(false as boolean);
-  const anchorRef = React.useRef<HTMLButtonElement>(null);
-  const { displayType, setDisplayType, showLiked, setShowLiked, filterLiked, resetList, changeDisplayList } = useAppContext();
+  const { displayType, setDisplayType, showLiked, setShowLiked, filterLiked, resetList } = useAppContext();
+  const anchorRef = useRef<HTMLButtonElement>(null);
+  const prevOpen = useRef(open);
 
   useEffect(() => {
     renderCount++;
   });
 
-  const toggleShowLiked = async () => {
-    showLiked ? resetList() : filterLiked();
-    await setShowLiked((prevState: boolean) => !prevState);
-  };
+  useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current!.focus();
+    }
+    prevOpen.current = open;
+  }, [open]);
 
-  const handleToggle = () => {
-    //for the dropMenu
+  const handleToggle = (): void => {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event: React.MouseEvent<EventTarget>) => {
+  const handleClose = (event: React.MouseEvent<EventTarget>): void => {
     if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
       return;
     }
     setOpen(false);
   };
 
-  const handleTypeChange = (newDisplay: displayOption) => {
-    setDisplayType(newDisplay);
-    changeDisplayList();
-  };
-
-  function handleListKeyDown(event: React.KeyboardEvent) {
+  function handleListKeyDown(event: React.KeyboardEvent): void {
     if (event.key === 'Tab') {
       event.preventDefault();
       setOpen(false);
     }
   }
 
-  // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus();
-    }
+  const handleTypeChange = (newDisplay: displayOption): void => {
+    setDisplayType(newDisplay);
+  };
 
-    prevOpen.current = open;
-  }, [open]);
+  const toggleShowLiked = (): void => {
+    showLiked ? resetList() : filterLiked();
+    setShowLiked((prevState: boolean) => !prevState);
+  };
 
   return (
     <Grid container justifyContent="space-between">

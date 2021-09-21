@@ -1,47 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import React from 'react';
+import { IconButton, makeStyles, Typography, Button, Grid } from '@material-ui/core';
 import { Favorite, FavoriteBorder } from '@material-ui/icons';
-import { useAppContext } from './../../AppContext';
-import { Apod } from './../../model/Models';
 
 const useStyles = makeStyles(() => ({
-  likeButton: { opacity: '100%', position: 'absolute', bottom: '0px', right: '0px', padding: '7px' },
+  likeButton: { opacity: '100%', position: 'absolute', bottom: '0px', right: '0px' },
 }));
 
-type Props = { date: Date };
+type Props = { date: Date; liked: boolean; toggleLike: () => void };
 
-export const LikeButton: React.FC<Props> = ({ date }) => {
+export const LikeButton: React.FC<Props> = ({ date, liked, toggleLike, children }) => {
   const classes = useStyles();
-  const [liked, setLiked] = useState(false as boolean);
-  const { displayList, setDisplayList, showLiked } = useAppContext();
-
-  useEffect(() => {
-    let likeState = localStorage.getItem(date.toString());
-    setLiked(likeState === 'true' ? true : false);
-  }, [date]);
-
-  const toggleLike = (): void => {
-    let toggled: boolean = !liked;
-
-    localStorage.setItem(date.toString(), toggled.toString());
-    setLiked(toggled);
-    if (toggled === false && showLiked) {
-      let temp: Apod[] = [...displayList];
-      temp = temp.filter((obj) => obj.date !== date);
-      console.log(date, temp);
-      setDisplayList(temp);
-    }
-  };
 
   return (
-    <IconButton
-      centerRipple={true}
-      onClick={() => {
-        toggleLike();
-      }}
-      className={classes.likeButton}
-    >
-      {liked ? <Favorite style={{ color: 'red' }} /> : <FavoriteBorder style={{ color: 'white' }} />}
-    </IconButton>
+    <Grid container justifyContent="space-between">
+      <Grid item className={classes.likeButton}>
+        <Grid container alignContent="center">
+          {/* <Grid item>
+            <Grid container alignContent="center" style={{ height: '100%' }}>
+              <Typography style={{ color: 'white' }}>{children}</Typography>
+            </Grid>
+          </Grid> */}
+          <IconButton
+            centerRipple={true}
+            onClick={() => {
+              toggleLike();
+            }}
+          >
+            {liked ? <Favorite style={{ color: 'red' }} /> : <FavoriteBorder style={{ color: 'white' }} />}
+          </IconButton>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
