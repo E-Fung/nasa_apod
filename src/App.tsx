@@ -1,13 +1,13 @@
 import './App.css';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { MainPage } from './component/MainPage';
+import { AppContextProvider } from './AppContext';
 
 function App() {
   return (
     <div className="App">
-      <Router>
-        <Route path={'/'} component={MainPage} />
-      </Router>
+      <AppContextProvider>
+        <MainPage />
+      </AppContextProvider>
     </div>
   );
 }
