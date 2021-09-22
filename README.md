@@ -55,4 +55,4 @@ By default, shows the latest Apod first
 ## Reflections
 If given more time, I would like to create a better masonry layout logic where each APOD card is within its vicinity in terms of date. (at the moment, APODs with large heights can make the order and spacing look unnatural) 
 
-I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement. I would also add the choose date functionality. 
+I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement. I would also add the choose date functionality, the loading functionality is already implemented, I just did not have enough time to add the date-picking. 
