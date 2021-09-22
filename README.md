@@ -1,14 +1,9 @@
 # Shopify Winter 2021 Internship Challenge
 
 ## Table of Contents
-- [TL;DR](https://github.com/E-Fung/shopify_2021#tldr)
 - [Tools](https://github.com/E-Fung/shopify_2021#tools)
 - [Features_Showcase](https://github.com/E-Fung/shopify_2021#features_showcase)
 - [Reflections](https://github.com/E-Fung/shopify_2021#reflections)
-
-
-## TL;DR
-My application adds the save like on reload function, sort by date...
 
 #### List of Extra Features
 - Sort by date
@@ -59,4 +54,6 @@ By default, shows the latesy Apod first
 ![gif of sort functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/sort_functionality.gif)
 
 ## Reflections
-If given more time, I would like to create a better masonry layout logic where each APOD card is within its vicinity in terms of date. I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement.
+If given more time, I would like to create a better masonry layout logic where each APOD card is within its vicinity in terms of date. (at the moment, APODs with large heights can make the order and spacing look unnatural) 
+
+I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement.
