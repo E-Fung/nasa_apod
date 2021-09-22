@@ -31,12 +31,11 @@ Likes are saved in localStorage and retrieved upon reloads
 ![gif of saved liked functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/save_liked_functionality.gif)
 
 ### Modal
-A modal is opened upon click on and Apod image, modal is create via ReactDom.createPortal
+A modal is opened upon click on of APOD image, modal is create via ReactDom.createPortal
 
 ![gif of modal functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/modal_functionality.gif)
 
 ### Load More
-Loads between the closest date and entire month
 
 ![gif of load_more functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/load_more_functionality.gif)
 
@@ -44,16 +43,16 @@ Loads between the closest date and entire month
 
 ![gif of card_hover functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/hover_card_functionality.gif)
 
-### No Liked 
+### No APOD(s) Liked 
 
 ![gif of no liked functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/no_liked_functionality.gif)
 
 ### Sort by Date
-By default, shows the latesy Apod first
+By default, shows the latest Apod first
 
 ![gif of sort functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/sort_functionality.gif)
 
 ## Reflections
 If given more time, I would like to create a better masonry layout logic where each APOD card is within its vicinity in terms of date. (at the moment, APODs with large heights can make the order and spacing look unnatural) 
 
-I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement.
+I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement. I would also add the choose date functionality. 
