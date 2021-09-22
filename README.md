@@ -2,6 +2,9 @@
 
 ## Table of Contents
 - [TL;DR](https://github.com/E-Fung/shopify_2021#tldr)
+- [Tools](https://github.com/E-Fung/shopify_2021#tools)
+- [Features_Showcase](https://github.com/E-Fung/shopify_2021#features_showcase)
+- [Reflections](https://github.com/E-Fung/shopify_2021#reflections)
 
 
 ## TL;DR
@@ -12,8 +15,8 @@ My application adds the save like on reload function, sort by date...
 - Save Likes
 - API loading animation
 - Like animation
-- Modal
-- Masonry
+- Modal upon card-click
+- Masonry layout for cleaner design
 
 ## Tools
 
@@ -25,33 +28,35 @@ My application adds the save like on reload function, sort by date...
 - React Promise Tracker
 - Create Portal
 
-## Specified Features
-
-### Hover Card
-
-![gif of card_hover functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/hover_card_functionality.gif)
-
-### Load More
-Loads between the closest date and entire month
-
-![gif of load_more functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/load_more_functionality.gif)
-
-### Modal
-Uses Portal
-
-![gif of modal functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/modal_functionality.gif)
-
-### No Liked 
-
-![gif of no liked functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/no_liked_functionality.gif)
+## Features_Showcase
 
 ### Saved Liked
 Likes are saved in localStorage and retrieved upon reloads
 
 ![gif of saved liked functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/save_liked_functionality.gif)
 
+### Modal
+A modal is opened upon click on and Apod image, modal is create via ReactDom.createPortal
+
+![gif of modal functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/modal_functionality.gif)
+
+### Load More
+Loads between the closest date and entire month
+
+![gif of load_more functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/load_more_functionality.gif)
+
+### On Card Hover
+
+![gif of card_hover functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/hover_card_functionality.gif)
+
+### No Liked 
+
+![gif of no liked functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/no_liked_functionality.gif)
+
 ### Sort by Date
+By default, shows the latesy Apod first
 
 ![gif of sort functionality](https://github.com/E-Fung/shopify_2021/blob/main/functionality%20gifs/sort_functionality.gif)
 
 ## Reflections
+If given more time, I would like to create a better masonry layout logic where each APOD card is within its vicinity in terms of date. I also know that my logic is not optimal, too many rerenders are occuring and state management could use improvement.
