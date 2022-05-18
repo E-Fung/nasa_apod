@@ -10,6 +10,19 @@ export const getThumbnailUrl = (videoUrl: string): Promise<rawThumbnailURL> => {
   return trackPromise(axios.get(url).then((resp: any) => resp));
 };
 
+export const getSpecificApod = (startDate: Date, endDate: Date): Promise<ApodData> => {
+  let params = {
+    api_key: API_KEY,
+    concept_tags: false, //returns concept tags, currently has no functionality
+    hd: true, //legacy purpose, no actual effect
+    start_date: startDate, // cannot be used with date
+    end_date: endDate,
+    thumbs: true, //returns URL of video thumbnail if APOD is video
+  };
+  let url: string = `https://api.nasa.gov/planetary/apod`;
+  return trackPromise(axios.get(url, { params: params }).then((resp: any) => resp));
+};
+
 export const getBasicAPI = (): Promise<ApodData> => {
   //returns promise of all APOD from the start of current month to present day
   let curr_date: Date | string = new Date();

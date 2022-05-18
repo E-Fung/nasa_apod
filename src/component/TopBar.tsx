@@ -3,6 +3,8 @@ import { Button, Grid, MenuItem, Popper, Grow, ClickAwayListener, Paper, MenuLis
 import { ArrowDropDown } from '@material-ui/icons';
 import { displayOption } from './../model/Models';
 import { useAppContext } from '../AppContext';
+import DatePicker from 'react-date-picker';
+import { getSpecificApod } from './../service/service';
 
 const useStyles = makeStyles(() => ({
   white: {
@@ -12,6 +14,8 @@ const useStyles = makeStyles(() => ({
 
 export const TopBar: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState(false as boolean);
+  const [startDate, setStartDate] = useState(new Date() as Date);
+  const [endDate, setEndDate] = useState(new Date() as Date);
   const { displayType, setDisplayType, showLiked, setShowLiked, filterLiked, resetList } = useAppContext();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const prevOpen = useRef(openDropdown);
@@ -52,16 +56,18 @@ export const TopBar: React.FC = () => {
   };
 
   return (
-    <Grid container justifyContent="space-between">
+    <Grid container justifyContent='space-between'>
       <Button onClick={handleShowLiked} className={classes.white}>
         {showLiked ? 'Show All' : 'Show Liked'}
       </Button>
+      {/* <DatePicker onChange={setStartDate} value={startDate} minDate={new Date('1995-06-16Z')} maxDate={new Date()} />
+      <DatePicker onChange={setEndDate} value={endDate} minDate={new Date('1995-06-16Z')} maxDate={new Date()} /> */}
       <Button
         endIcon={<ArrowDropDown />}
         className={classes.white}
         ref={anchorRef}
         aria-controls={openDropdown ? 'menu-list-grow' : undefined}
-        aria-haspopup="true"
+        aria-haspopup='true'
         onClick={handleToggleDropdown}
       >
         {displayType}
@@ -71,7 +77,7 @@ export const TopBar: React.FC = () => {
           <Grow {...TransitionProps} style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}>
             <Paper>
               <ClickAwayListener onClickAway={handleCloseDropdown}>
-                <MenuList autoFocusItem={openDropdown} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                <MenuList autoFocusItem={openDropdown} id='menu-list-grow' onKeyDown={handleListKeyDown}>
                   <MenuItem
                     onClick={(e) => {
                       handleCloseDropdown(e);

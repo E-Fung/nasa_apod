@@ -14,7 +14,6 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     minWidth: '100%',
     width: '100%',
-    cursor: 'pointer',
   },
   date: {
     position: 'absolute',
